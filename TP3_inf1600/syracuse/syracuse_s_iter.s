@@ -16,7 +16,7 @@ xor %edx, %edx      #inialisation du registre edx à 0
 
 affichage_avec_call: 
 pushl %eax          #sauvegarde eax dans la pile
-pushl %ecx          #sauvegarde eax dans la pile
+pushl %ecx          #sauvegarde ecx dans la pile
 call afficher       #appel de la fonction "afficher" qui se trouve dans le main
 popl %ecx
 popl %eax
