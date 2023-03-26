@@ -1,6 +1,3 @@
-.data
-val_init: 15
-
 .text
 .globl syracuse_s_iter
 .globl afficher
@@ -10,31 +7,44 @@ pushl   %ebp
 movl    %esp, %ebp
 pushl   %ebx
 
-
-movl , %esi            ; initiliser l'itterateur à 1
-movl $0, %ebx      ; Mettre la valeur à vérifier dans le registre EAX
-
-verif:
-and %ebx, 0x01          ; Effectuer l'opération AND avec la valeur 1
-jz pair                 ; Sauter à l'étiquette "pair" si le résultat est zéro (nombre pair)
-
-impair:
-imul %ebx, 3 
-
-cmp $1, %ebx
-je retour 
-jump verif                ; Sinon, le nombre est impair :     
-
-pair:
+initialisateur_registres:
+movl 8(%ebp), %eax  #chercher le premier paramètre stocké dans la pile Un = 15
+xor %ebx, %ebx      #inialisation du registre ebx à 0
+xor %ecx, %ecx      #initialiser l'iterration à  i = 0
+xor %edx, %edx      #inialisation du registre edx à 0
 
 
-cmp $1, %ebx
-je retour 
-jmp verif
+affichage_avec_call: 
+pushl %eax          #sauvegarde eax dans la pile
+pushl %ecx          #sauvegarde eax dans la pile
+call afficher       #appel de la fonction "afficher" qui se trouve dans le main
+addl $8, %esp       #dépile les valeurs de eax et ecx qu'on a mis dans la pile
 
 
-# FIN COMPLETION
-# NE RIEN MODIFIER APRES CETTE LIGNE
+boucle_verification: 
+cmp $1, %eax        #vérifier si Un qu'on vient de load = 1 (donc fin du programme)
+je retour
+movl $1, %edx
+and %eax, %edx      #AND avec la valeur 1 equivalent à faire division par 2 et voir si le reste est 0
+incl %ecx           #incrémenter i++ 
+pushl %eax          #affichage de Un dans la pile ==> stocker valeur
+cmpl $0, %edx       #compare si le reste est 0 dans edx
+jne impair          #jmp à impair si le résultat est != zéro ==> le nombre est impair
+jmp pair            #jmp à paire si le résultat est zéro ==> le nombre est pair
+
+
+impair: 
+imull $3, %eax     #3*Un
+addl $1, %eax      #(3*UN) + 1
+jmp boucle
+                 
+
+pair: 
+popl %eax
+shrl $1, %eax      #shift right une fois est équivalent à faire division par 2
+jmp boucle
+
+
 retour:   
 popl %ebx
 leave
