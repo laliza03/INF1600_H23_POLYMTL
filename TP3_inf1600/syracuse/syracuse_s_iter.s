@@ -18,7 +18,8 @@ affichage_avec_call:
 pushl %eax          #sauvegarde eax dans la pile
 pushl %ecx          #sauvegarde eax dans la pile
 call afficher       #appel de la fonction "afficher" qui se trouve dans le main
-addl $8, %esp       #dépile les valeurs de eax et ecx qu'on a mis dans la pile
+popl %ecx
+popl %eax
 
 
 boucle_verification: 
@@ -36,13 +37,13 @@ jmp pair            #jmp à paire si le résultat est zéro ==> le nombre est pa
 impair: 
 imull $3, %eax     #3*Un
 addl $1, %eax      #(3*UN) + 1
-jmp boucle
+jmp affichage_avec_call
                  
 
 pair: 
 popl %eax
 shrl $1, %eax      #shift right une fois est équivalent à faire division par 2
-jmp boucle
+jmp affichage_avec_call
 
 
 retour:   

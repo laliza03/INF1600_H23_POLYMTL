@@ -7,8 +7,15 @@ movl   %esp, %ebp
 pushl %ebx
 # DEBUT COMPLETION
 
-# FIN COMPLETION
-# NE RIEN MODIFIER APRES CETTE LIGNE
+
+
+
+
+
+
+
+
+
 retour:   
 popl %ebx
 leave
