@@ -7,70 +7,90 @@ pushl %ebx
 
 quicksort:
 pushl %ebp
-movl %ebp, %esp
-subl %esp, 0x10 ; espace pour 2 variabl%es local%es
-movl %eax, [%ebp+8] ; gauche
-movl %edx, [%ebp+12] ; droite
-subl %edx, %eax ; différence droite-gauche
-cmpl %edx, 1 ; si la taille est <= 1, retour
-jl%e fin_quicksort
+movl %esp, %ebp
+subl %esp, 0x10 # espace pour 2 variables locales
+movl %eax, 8(%ebp) # gauche
+movl %edx, 12(%ebp) # droite
+subl %edx, %eax # différence droite-gauche
+cmpl %edx, 1 # si la taille est <= 1, retour
+jle retour
 
-; choisir un pivot
-pushl %eax ; gauche
-pushl %edx ; droite
+# choisir un pivot
+pushl %eax # gauche
+pushl %edx # droite
 call medianOfThree
-addl %esp, 0x8 ; nettoyer la pile
+addl %esp, 0x8 # nettoyer la pile
 
-; réordonner les éléments du tableau
-movl %ebx, %eax ; pivot
-movl %ecx, %eax ; i = gauche
-movl %esi, %edx ; k = droite - 1
+# réordonner les éléments du tableau
+movl %ebx, %eax # pivot
+movl %ecx, %eax # i = gauche
+movl %esi, %edx # k = droite - 1
+
 debut_partition:
-movl %edx, [%ebp+8+%ecx4] ; %edx = T[i]
-cmpl %edx, %ebx ; %edx - pivot
-jg%e t%est_k
-addl %ecx, 1 ; i++
-jmp d%ebut_partition
+shll $2, %ecx
+addl 8(%ebp), %ecx
+movl %edx, %ecx # %edx = T[i]
+cmpl %edx, %ebx # %edx - pivot
+jge test_k
+addl %ecx, 1 # i++
+jmp debut_partition
 test_k:
-movl %edx, [%ebp+8+%esi4] ; %edx = T[k]
-cmpl %edx, %ebx ; %edx - pivot
+shll $2, %esi
+addl 8(%ebp), %esi
+movl %edx, %esi # %edx = T[k]
+cmpl %edx, %ebx # %edx - pivot
 jle echanger
-subl %esi, 1 ; k--
+subl $1, %esi  # k--
 jmp debut_partition
 echanger:
-movl %eax, [%ebp+8+%ecx4] ; %eax = T[i]
-movl %edx, [%ebp+8+%esi4] ; %edx = T[k]
-movl [%ebp+8+%ecx4], %edx ; T[i] = T[k]
-movl [%ebp+8+%esi4], %eax ; T[k] = %eax
-addl %ecx, 1 ; i++
-subl %esi, 1 ; k--
-cmpl %ecx, %esi ; si i < k, continuer partitionnement
+shll $2, %ecx
+addl 8(%ebp), %ecx
+movl %eax, %ecx # %eax = T[i]
+shll $2, %esi
+addl 8(%ebp), %esi
+movl %edx, %esi # %edx = T[k]
+shll $2, %ecx
+addl 8(%ebp), %ecx
+movl %ecx, %edx # T[i] = T[k]
+shll $2, %esi
+addl 8(%ebp), %esi
+movl %esi, %eax # T[k] = %eax
+addl $1, %ecx  # i++
+subl $1, %esi  # k--
+cmpl %ecx, %esi # si i < k, continuer partitionnement
 jl debut_partition
 
-; placer le pivot à sa position finale
-movl %eax, [%ebp+8+%ecx4] ; %eax = T[i]
-movl [%ebp+8+%esi4], %eax ; T[k] = T[i]
-movl [%ebp+8+%ecx*4], %ebx ; T[i] = pivot
+# placer le pivot à sa position finale
+shll $2, %ecx
+addl 8(%ebp), %ecx
+movl %eax, %ecx # %eax = T[i]
+shll $2, %esi
+addl 8(%ebp), %esi
+movl %esi, %eax # T[k] = T[i]
+shll $2, %ecx
+addl 8(%ebp), %ecx
+movl %ecx, %ebx # T[i] = pivot
 
-; appel récursif sur les deux partitions
-movl %eax, %ecx ; pivot_position
-subl %eax, [%ebp+8] ; pivot_position - gauche
-pushl %edx ; droite
-pushl %eax ; droite_partition_size
-pushl [%ebp+8] ; gauche
+# appel récursif sur les deux partitions
+movl %eax, %ecx # pivot_position
+subl %eax, 8(%ebp) # pivot_position - gauche
+pushl %edx # droite
+pushl %eax # droite_partition_size
+pushl 8(%ebp) # gauche
 call quicksort
-addl %esp, 0xc ; nettoyer la pile
-movl %eax, %edx ; droite
-subl %eax, %ecx ; droite_partition_size = droite - pivot_position
-d%ecl %eax ; n%e pas trier le pivot deux fois
-pushl %eax ; gauche_partition_size
-pushl [%ebp+12] ; droite
-pushl %ecx ; gauche
+addl $12, %esp # nettoyer la pile
+movl %eax, %edx # droite
+subl %eax, %ecx # droite_partition_size = droite - pivot_position
+decl %eax # ne pas trier le pivot deux fois
+pushl %eax # gauche_partition_size
+pushl 12(%ebp) # droite
+pushl %ecx # gauche
 call quicksort
-addl %esp, 0xc ; nettoyer la pile
+addl $12, %esp # nettoyer la pile
 
 
 retour:   
 popl %ebx
+popl %ebp
 leave
 ret
