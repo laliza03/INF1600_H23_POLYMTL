@@ -12,7 +12,7 @@ void afficher(int, int);
 
 int main()
 {
-   unsigned int u0 = 15;
+   unsigned int u0 = 1876324657;
 
    printf("\n\nSuite de syracuse iterative - C\n");
    syracuse_c_iter(u0);
