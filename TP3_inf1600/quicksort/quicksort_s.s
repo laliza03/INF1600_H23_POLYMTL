@@ -7,7 +7,7 @@ pushl %ebx
 
 quicksort:
 pushl %ebp
-movl %esp, %ebp
+movl %esp, %ebp, 
 subl %esp, 0x10 # espace pour 2 variables locales
 movl %eax, 8(%ebp) # gauche
 movl %edx, 12(%ebp) # droite
@@ -91,6 +91,5 @@ addl $12, %esp # nettoyer la pile
 
 retour:   
 popl %ebx
-popl %ebp
 leave
 ret
